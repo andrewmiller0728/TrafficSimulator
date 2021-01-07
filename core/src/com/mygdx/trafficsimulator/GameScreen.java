@@ -15,12 +15,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        circleRoad = new CircleRoad(384, 60);
-        vehicle = new Vehicle(
-                new Vector2(64f, 128f),
-                new Vector2(circleRoad.getCircle().x + circleRoad.getCircle().radius, circleRoad.getCircle().y)
-        );
-        vehicle.setRoad(circleRoad);
+        circleRoad = new CircleRoad(Gdx.graphics.getHeight() * (2f / 4f), 720);
+        vehicle = new Vehicle(new Vector2(64f, 128f), circleRoad);
 
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
@@ -32,6 +28,9 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.2f, 0.1f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        vehicle.driveToNextPoint(0.01f);
+//        System.out.printf("Current distance from center = %s\n", );
 
         stage.act(delta);
         stage.draw();

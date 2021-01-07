@@ -6,25 +6,30 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 
 public class Vehicle extends Actor {
 
-    private TextureRegion region;
     private CircleRoad road;
-    private int roadPointIndex;
+    private int nextRoadPointIndex;
+    private Vector2 currRoadPoint;
 
-    public Vehicle(Vector2 size, Vector2 pos) {
+    private TextureRegion region;
+
+    public Vehicle(Vector2 size, CircleRoad road) {
+        this.road = road;
+        nextRoadPointIndex = 1;
+        currRoadPoint = road.getPoints()[0];
+
         region = new TextureRegion(new Texture("car_red_top.png"));
         setBounds(
                 region.getRegionX(), region.getRegionY(),
                 region.getRegionWidth(), region.getRegionHeight()
         );
         setSize(size.x, size.y);
-        setPosition(pos.x, pos.y, Align.center);
+        setPosition(currRoadPoint.x, currRoadPoint.y, Align.center);
         addListener(new VehicleInputListener());
-        road = null;
-        roadPointIndex = 0;
     }
 
     @Override
@@ -41,21 +46,35 @@ public class Vehicle extends Actor {
         );
     }
 
-    public CircleRoad getRoad() {
-        return road;
-    }
-
-    public void setRoad(CircleRoad road) {
-        this.road = road;
-    }
-
-    public Vector2 getNextRoadPoint() {
-        if (roadPointIndex >= road.getPoints().length) {
-            roadPointIndex = 0;
+    public Vector2 peekNextRoadPoint() {
+        if (nextRoadPointIndex >= road.getPoints().length) {
+            nextRoadPointIndex = 0;
         }
-        Vector2 point = road.getPoints()[roadPointIndex];
-        roadPointIndex++;
-        return point;
+        Vector2 nextRoadPoint = road.getPoints()[nextRoadPointIndex];
+        nextRoadPointIndex++;
+        return nextRoadPoint;
+    }
+
+    public void addMoveToNextRoadPointAction(float actionDuration) {
+        currRoadPoint = peekNextRoadPoint();
+        addAction(Actions.moveToAligned(
+                currRoadPoint.x,
+                currRoadPoint.y,
+                Align.center,
+                actionDuration
+        ));
+    }
+
+    public void driveToNextPoint(float actionDuration) {
+        if (getActions().isEmpty()) {
+            Vector2 prevPosition = currRoadPoint;
+            addMoveToNextRoadPointAction(actionDuration);
+            setRotation(currRoadPoint.cpy().sub(prevPosition).angleDeg() - 90f);
+        }
+    }
+
+    public Vector2 getPositionVector() {
+        return new Vector2(getX(Align.center), getY(Align.center));
     }
 
 }

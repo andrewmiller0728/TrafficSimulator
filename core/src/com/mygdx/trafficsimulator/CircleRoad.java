@@ -34,4 +34,5 @@ public class CircleRoad {
     public Vector2[] getPoints() {
         return points;
     }
+
 }
