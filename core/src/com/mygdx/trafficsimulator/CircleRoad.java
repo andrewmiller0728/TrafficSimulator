@@ -31,6 +31,10 @@ public class CircleRoad {
         return circle;
     }
 
+    public Vector2 getCenterVector() {
+        return new Vector2(circle.x, circle.y);
+    }
+
     public Vector2[] getPoints() {
         return points;
     }

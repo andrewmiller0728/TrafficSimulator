@@ -28,6 +28,7 @@ public class Vehicle extends Actor {
                 region.getRegionWidth(), region.getRegionHeight()
         );
         setSize(size.x, size.y);
+        setOrigin(size.x / 2f, size.y / 2f);
         setPosition(currRoadPoint.x, currRoadPoint.y, Align.center);
         addListener(new VehicleInputListener());
     }
