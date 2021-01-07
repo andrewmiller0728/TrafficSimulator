@@ -10,17 +10,21 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class GameScreen implements Screen {
 
     private Stage stage;
-    private Vehicle vehicleA;
+    private Vehicle vehicleA, vehicleB, vehicleC;
     private CircleRoad circleRoad;
 
     @Override
     public void show() {
         circleRoad = new CircleRoad(Gdx.graphics.getHeight() * (3f / 8f), (int)(360 * 1f / 2f));
-        vehicleA = new Vehicle(new Vector2(64f, 128f), circleRoad);
+        vehicleA = new Vehicle(new Vector2(64f, 128f), circleRoad, 0.1f);
+        vehicleB = new Vehicle(new Vector2(64f, 128f), circleRoad, 0.5f);
+        vehicleC = new Vehicle(new Vector2(64f, 128f), circleRoad, 1.0f);
 
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
         stage.addActor(vehicleA);
+        stage.addActor(vehicleB);
+        stage.addActor(vehicleC);
 //        stage.setKeyboardFocus(vehicle);
     }
 
@@ -29,7 +33,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.1f, 0.2f, 0.1f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        vehicleA.driveToNextPoint(0.01f);
+        vehicleA.driveToNextPoint();
+        vehicleB.driveToNextPoint();
+        vehicleC.driveToNextPoint();
 
         stage.act(delta);
         stage.draw();
