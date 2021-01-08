@@ -11,14 +11,14 @@ public class GameScreen implements Screen {
 
     private Stage stage;
     private Vehicle vehicleA, vehicleB, vehicleC;
-    private CircleRoad circleRoad;
+    private CircleLane circleLane;
 
     @Override
     public void show() {
-        circleRoad = new CircleRoad(Gdx.graphics.getHeight() * (3f / 8f), (int)(360 * 1f / 2f));
-        vehicleA = new Vehicle(new Vector2(64f, 128f), circleRoad, 0.1f);
-        vehicleB = new Vehicle(new Vector2(64f, 128f), circleRoad, 0.5f);
-        vehicleC = new Vehicle(new Vector2(64f, 128f), circleRoad, 1.0f);
+        circleLane = new CircleLane(Gdx.graphics.getHeight() * (3f / 8f), (int)(360 * 1f / 2f));
+        vehicleA = new Vehicle(new Vector2(64f, 128f), circleLane, 0.1f);
+        vehicleB = new Vehicle(new Vector2(64f, 128f), circleLane, 0.5f);
+        vehicleC = new Vehicle(new Vector2(64f, 128f), circleLane, 1.0f);
 
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);

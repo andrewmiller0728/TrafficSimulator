@@ -5,12 +5,14 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class CircleRoad {
+public class CircleLane {
+
+    // TODO migrate lane point tracking from the vehicles to the lanes in a table of {vehicle, pointIndex} pairs
 
     private Circle circle;
     private Vector2[] points;
 
-    public CircleRoad(float radius, int pointCount) {
+    public CircleLane(float radius, int pointCount) {
         circle = new Circle(
                 Gdx.graphics.getWidth() / 2f,
                 Gdx.graphics.getHeight() / 2f,
