@@ -5,12 +5,13 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class CircleLane {
+import java.util.Arrays;
 
-    // TODO migrate lane point tracking from the vehicles to the lanes in a table of {vehicle, pointIndex} pairs
+public class CircleLane {
 
     private Circle circle;
     private Vector2[] points;
+    private Vehicle[] vehicles;
 
     public CircleLane(float radius, int pointCount) {
         circle = new Circle(
@@ -27,6 +28,7 @@ public class CircleLane {
             );
             angle += 360f / pointCount;
         }
+        vehicles = new Vehicle[pointCount];
     }
 
     public Circle getCircle() {
@@ -41,4 +43,28 @@ public class CircleLane {
         return points;
     }
 
+    public void addVehicle(Vehicle vehicle) {
+        vehicles[vehicle.getCurrLanePointIndex()] = vehicle;
+    }
+
+    public Vehicle getVehicle(int index) {
+        return vehicles[index % points.length];
+    }
+
+    public Vector2 getLanePoint(Vehicle vehicleA) {
+        for (Vehicle vehicleB : vehicles) {
+            if (vehicleB.equals(vehicleA)) {
+                return vehicleA.getPositionVector();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "CircleLane{" +
+                "circle=" + circle +
+                ", pointCount=" + points.length +
+                '}';
+    }
 }

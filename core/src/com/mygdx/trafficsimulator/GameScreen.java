@@ -16,16 +16,18 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         circleLane = new CircleLane(Gdx.graphics.getHeight() * (3f / 8f), (int)(360 * 1f / 2f));
-        vehicleA = new Vehicle(new Vector2(64f, 128f), circleLane, 0.1f);
-        vehicleB = new Vehicle(new Vector2(64f, 128f), circleLane, 0.5f);
-        vehicleC = new Vehicle(new Vector2(64f, 128f), circleLane, 1.0f);
+        vehicleA = new Vehicle(new Vector2(64f, 128f), circleLane, 20, Vehicle.Type.CAR_RED);
+        vehicleA.setThrottle(1.0f);
+        vehicleB = new Vehicle(new Vector2(64f, 128f), circleLane, 10, Vehicle.Type.CAR_GREEN);
+        vehicleB.setThrottle(0.5f);
+        vehicleC = new Vehicle(new Vector2(64f, 128f), circleLane, 0, Vehicle.Type.CAR_BLUE);
+        vehicleC.setThrottle(0.1f);
 
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
         stage.addActor(vehicleA);
         stage.addActor(vehicleB);
         stage.addActor(vehicleC);
-//        stage.setKeyboardFocus(vehicle);
     }
 
     @Override
