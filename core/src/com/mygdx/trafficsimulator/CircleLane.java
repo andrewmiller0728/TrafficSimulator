@@ -51,20 +51,15 @@ public class CircleLane {
         return vehicles[index % points.length];
     }
 
-    public Vector2 getLanePoint(Vehicle vehicleA) {
-        for (Vehicle vehicleB : vehicles) {
-            if (vehicleB.equals(vehicleA)) {
-                return vehicleA.getPositionVector();
-            }
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "CircleLane{" +
                 "circle=" + circle +
                 ", pointCount=" + points.length +
                 '}';
+    }
+
+    public void printLane() {
+        System.out.println(Arrays.toString(vehicles));
     }
 }

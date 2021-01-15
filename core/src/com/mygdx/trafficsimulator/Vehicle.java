@@ -19,18 +19,13 @@ public class Vehicle extends Actor {
     }
 
     private CircleLane lane;
-    private int currLanePointIndex;
-    private Vector2 prevLanePoint, currLanePoint;
     private float actionDuration;
 
     private TextureRegion region;
 
     public Vehicle(Vector2 size, CircleLane currLane, int initLanePoint, Type vehicleColor) {
         this.lane = currLane;
-        currLanePointIndex = initLanePoint;
-        currLanePoint = currLane.getPoints()[currLanePointIndex];
         currLane.addVehicle(this);
-        prevLanePoint = null;
         setThrottle(0f);
 
         switch (vehicleColor) {
@@ -109,8 +104,12 @@ public class Vehicle extends Actor {
     }
 
     public boolean isForwardBlocked() {
-        float dist = this.getPositionVector().dst(getNextVehicleInLane().getPositionVector());
-        return dist <= getHeight();
+        Vehicle nextVehicleInLane = getNextVehicleInLane();
+        if (nextVehicleInLane != null) {
+            float dist = this.getPositionVector().dst(nextVehicleInLane.getPositionVector());
+            return dist <= getHeight() && this.currLanePointIndex < nextVehicleInLane.currLanePointIndex;
+        }
+        else return false;
     }
 
     public Vehicle getNextVehicleInLane() {
