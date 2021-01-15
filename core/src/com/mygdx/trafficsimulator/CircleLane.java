@@ -44,7 +44,7 @@ public class CircleLane {
     }
 
     public Vector2 getPoint(int index) {
-        return points[index];
+        return points[index % points.length];
     }
 
     public Vector2[] getPoints() {

@@ -96,7 +96,7 @@ public class Vehicle extends Actor {
     public void driveToNextPoint() {
         // TODO request move from lane, if lane confirms, add move action
         Vehicle next = getNextVehicleInLane();
-        if (next != null && getActions().isEmpty()) {
+        if (getActions().isEmpty()) {
             addMoveToNextLanePointAction(actionDuration);
         }
     }
@@ -115,12 +115,7 @@ public class Vehicle extends Actor {
         while (lane.getVehicle(i) == null && i < lane.getPoints().length / 2f) {
             i++;
         }
-        if (this.equals(lane.getVehicle(i))) {
-            return null;
-        }
-        else {
-            return lane.getVehicle(i);
-        }
+        return lane.getVehicle(i);
     }
 
     public void setThrottle(float t) {
