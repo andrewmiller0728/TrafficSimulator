@@ -14,23 +14,24 @@ import java.util.Objects;
 
 public class Vehicle extends Actor {
 
+    private static int nextID = 0;
+    private int id;
+
     public enum Type {
         CAR_RED, CAR_GREEN, CAR_BLUE
     }
 
     private CircleLane lane;
-    private int currLanePointIndex;
-    private Vector2 prevLanePoint, currLanePoint;
     private float actionDuration;
-
     private TextureRegion region;
 
     public Vehicle(Vector2 size, CircleLane currLane, int initLanePoint, Type vehicleColor) {
-        this.lane = currLane;
-        currLanePointIndex = initLanePoint;
-        currLanePoint = currLane.getPoints()[currLanePointIndex];
-        currLane.addVehicle(this);
-        prevLanePoint = null;
+        id = nextID;
+        nextID++;
+
+        lane = currLane;
+        currLane.addVehicle(this, initLanePoint);
+
         setThrottle(0f);
 
         switch (vehicleColor) {
@@ -56,7 +57,8 @@ public class Vehicle extends Actor {
         );
         setSize(size.x, size.y);
         setOrigin(size.x / 2f, size.y / 2f);
-        setPosition(currLanePoint.x, currLanePoint.y, Align.center);
+        Vector2 currPos = lane.getPoint(initLanePoint);
+        setPosition(currPos.x, currPos.y, Align.center);
         addListener(new VehicleInputListener());
     }
 
@@ -64,9 +66,9 @@ public class Vehicle extends Actor {
     public void draw (Batch batch, float parentAlpha) {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-        if (prevLanePoint != null) {
-            setRotation(currLanePoint.cpy().sub(prevLanePoint).angleDeg() - 90f); // TODO rotate slowly
-        }
+//        if (prevLanePoint != null) {
+//            setRotation(currLanePoint.cpy().sub(prevLanePoint).angleDeg() - 90f); // TODO rotate slowly
+//        }
         batch.draw(
                 region,
                 getX(), getY(),
@@ -75,55 +77,6 @@ public class Vehicle extends Actor {
                 getScaleX(), getScaleY(),
                 getRotation()
         );
-    }
-
-    public float getDistance(Vehicle vehicle) {
-        return this.getPositionVector().dst(vehicle.getPositionVector());
-    }
-
-    public Vector2 peekNextLanePoint() {
-        if (currLanePointIndex + 1 >= lane.getPoints().length) {
-            currLanePointIndex = (currLanePointIndex + 1) % lane.getPoints().length;
-        }
-        Vector2 nextLanePoint = lane.getPoints()[currLanePointIndex + 1];
-        return nextLanePoint;
-    }
-
-    public void addMoveToNextLanePointAction(float actionDuration) {
-        currLanePoint = peekNextLanePoint();
-        currLanePointIndex++;
-        addAction(Actions.moveToAligned(
-                currLanePoint.x,
-                currLanePoint.y,
-                Align.center,
-                actionDuration
-        ));
-    }
-
-    public void driveToNextPoint() {
-        Vehicle next = getNextVehicleInLane();
-        if (next != null && getActions().isEmpty() && !isForwardBlocked()) {
-            prevLanePoint = currLanePoint;
-            addMoveToNextLanePointAction(actionDuration);
-        }
-    }
-
-    public boolean isForwardBlocked() {
-        float dist = this.getPositionVector().dst(getNextVehicleInLane().getPositionVector());
-        return dist <= getHeight();
-    }
-
-    public Vehicle getNextVehicleInLane() {
-        int i = this.getCurrLanePointIndex() + 1;
-        while (lane.getVehicle(i) == null) {
-            i++;
-        }
-        if (this.equals(lane.getVehicle(i))) {
-            return null;
-        }
-        else {
-            return lane.getVehicle(i);
-        }
     }
 
     public void setThrottle(float t) {
@@ -138,12 +91,24 @@ public class Vehicle extends Actor {
         );
     }
 
-    public Vector2 getPositionVector() {
-        return new Vector2(getX(Align.center), getY(Align.center));
+    public void addMoveToNextLanePointAction(float actionDuration) {
+        Vector2 nextLanePoint = lane.getPoint(lane.getVehicleIndex(this) + 1);
+        addAction(Actions.moveToAligned(
+                nextLanePoint.x,
+                nextLanePoint.y,
+                Align.center,
+                actionDuration
+        ));
     }
 
-    public int getCurrLanePointIndex() {
-        return currLanePointIndex;
+    public void driveToNextPoint() {
+        if (getActions().isEmpty() && lane.requestMove(this)) {
+            addMoveToNextLanePointAction(actionDuration);
+        }
+    }
+
+    public Vector2 getPositionVector() {
+        return new Vector2(getX(Align.center), getY(Align.center));
     }
 
     @Override
@@ -151,23 +116,18 @@ public class Vehicle extends Actor {
         if (this == o) return true;
         if (!(o instanceof Vehicle)) return false;
         Vehicle vehicle = (Vehicle) o;
-        return currLanePointIndex == vehicle.currLanePointIndex
-                && lane.equals(vehicle.lane)
-                && currLanePoint.equals(vehicle.currLanePoint);
+        return id == vehicle.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(lane, currLanePointIndex, currLanePoint);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Vehicle{" +
-                "color=" + getColor().toString() +
-                ", lane=" + lane +
-                ", currLanePointIndex=" + currLanePointIndex +
-                ", currLanePoint=" + currLanePoint +
+                "id=" + id +
                 '}';
     }
 }

@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.Arrays;
-
 public class CircleLane {
 
     private Circle circle;
@@ -39,22 +37,44 @@ public class CircleLane {
         return new Vector2(circle.x, circle.y);
     }
 
+    public Vector2 getPoint(int index) {
+        return points[index % points.length];
+    }
+
     public Vector2[] getPoints() {
         return points;
     }
 
-    public void addVehicle(Vehicle vehicle) {
-        vehicles[vehicle.getCurrLanePointIndex()] = vehicle;
+    public void addVehicle(Vehicle vehicle, int lanePoint) {
+        vehicles[lanePoint % vehicles.length] = vehicle;
     }
 
     public Vehicle getVehicle(int index) {
-        return vehicles[index % points.length];
+        return vehicles[index % vehicles.length];
     }
 
-    public Vector2 getLanePoint(Vehicle vehicleA) {
-        for (Vehicle vehicleB : vehicles) {
-            if (vehicleB.equals(vehicleA)) {
-                return vehicleA.getPositionVector();
+    public int getVehicleIndex(Vehicle vehicle) {
+        for (int i = 0; i < vehicles.length; i++) {
+            if (vehicle.equals(getVehicle(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean requestMove(Vehicle vehicle) {
+        if (getVehicleIndex(vehicle) != -1 && getVehicle(getVehicleIndex(vehicle) + 1) == null) {
+            vehicles[(getVehicleIndex(vehicle) + 1) % vehicles.length] = vehicle;
+            vehicles[getVehicleIndex(vehicle)] = null;
+            return true;
+        }
+        return false;
+    }
+
+    public Vector2 getLanePoint(Vehicle vehicle) {
+        for (Vehicle listVehicle : vehicles) {
+            if (listVehicle.equals(vehicle)) {
+                return vehicle.getPositionVector();
             }
         }
         return null;
@@ -63,8 +83,9 @@ public class CircleLane {
     @Override
     public String toString() {
         return "CircleLane{" +
-                "circle=" + circle +
+                "circle=" + circle.toString() +
                 ", pointCount=" + points.length +
                 '}';
     }
+
 }
