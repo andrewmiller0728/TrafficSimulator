@@ -39,16 +39,31 @@ public class CircleLane {
         return new Vector2(circle.x, circle.y);
     }
 
+    public Vector2 getPoint(int index) {
+        return points[index];
+    }
+
     public Vector2[] getPoints() {
         return points;
     }
 
-    public void addVehicle(Vehicle vehicle) {
-        vehicles[vehicle.getCurrLanePointIndex()] = vehicle;
+    public void addVehicle(Vehicle vehicle, int initLanePoint) {
+        if (vehicles[initLanePoint] == null) {
+            vehicles[initLanePoint] = vehicle;
+        }
     }
 
     public Vehicle getVehicle(int index) {
         return vehicles[index % points.length];
+    }
+
+    public int getVehicleIndex(Vehicle vehicle) {
+        for (int i = 0; i < vehicles.length; i++) {
+            if (vehicle.equals(vehicles[i])) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
