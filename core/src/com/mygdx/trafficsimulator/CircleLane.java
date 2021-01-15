@@ -64,7 +64,11 @@ public class CircleLane {
 
     public boolean requestMove(Vehicle vehicle) {
         if (getVehicleIndex(vehicle) != -1 && getVehicle(getVehicleIndex(vehicle) + 1) == null) {
-            vehicles[(getVehicleIndex(vehicle) + 1) % vehicles.length] = vehicle;
+            if (getVehicleIndex(vehicle) == vehicles.length - 1) {
+                vehicles[getVehicleIndex(vehicle)] = null;
+                vehicles[0] = vehicle;
+            }
+            addVehicle(vehicle, getVehicleIndex(vehicle) + 1);
             vehicles[getVehicleIndex(vehicle)] = null;
             return true;
         }
