@@ -79,38 +79,36 @@ public class Vehicle extends Actor {
         );
     }
 
-    public float getDistance(Vehicle vehicle) {
-        return this.getPositionVector().dst(vehicle.getPositionVector());
-    }
-
-    public Vector2 peekNextLanePoint() {
-        return null; // TODO
-    }
+//    public float getDistance(Vehicle vehicle) {
+//        return this.getPositionVector().dst(vehicle.getPositionVector());
+//    }
 
     public void addMoveToNextLanePointAction(float actionDuration) {
+        Vector2 nextPos = lane.getPoint(lane.getVehicleIndex(this) + 1);
         addAction(Actions.moveToAligned(
-                getPositionVector().x,
-                getPositionVector().y,
+                nextPos.x,
+                nextPos.y,
                 Align.center,
                 actionDuration
         ));
     }
 
     public void driveToNextPoint() {
+        // TODO request move from lane, if lane confirms, add move action
         Vehicle next = getNextVehicleInLane();
-        if (next != null && getActions().isEmpty() && !isForwardBlocked()) {
+        if (next != null && getActions().isEmpty()) {
             addMoveToNextLanePointAction(actionDuration);
         }
     }
 
-    public boolean isForwardBlocked() {
-        Vehicle nextVehicleInLane = getNextVehicleInLane();
-        if (nextVehicleInLane != null) {
-            float dist = this.getPositionVector().dst(nextVehicleInLane.getPositionVector());
-            return dist <= getHeight() && lane.getVehicleIndex(this) < lane.getVehicleIndex(nextVehicleInLane);
-        }
-        else return false;
-    }
+//    public boolean isForwardBlocked() {
+//        Vehicle nextVehicleInLane = getNextVehicleInLane();
+//        if (nextVehicleInLane != null) {
+//            float dist = this.getPositionVector().dst(nextVehicleInLane.getPositionVector());
+//            return dist <= getHeight() && lane.getVehicleIndex(this) < lane.getVehicleIndex(nextVehicleInLane);
+//        }
+//        else return false;
+//    }
 
     public Vehicle getNextVehicleInLane() {
         int i = lane.getVehicleIndex(this) + 1;

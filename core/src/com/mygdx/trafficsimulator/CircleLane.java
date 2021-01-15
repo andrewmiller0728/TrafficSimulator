@@ -31,6 +31,10 @@ public class CircleLane {
         vehicles = new Vehicle[pointCount];
     }
 
+    public boolean requestMove(Vehicle vehicle) {
+        return getVehicle(getVehicleIndex(vehicle) + 1) == null;
+    }
+
     public Circle getCircle() {
         return circle;
     }
@@ -48,8 +52,8 @@ public class CircleLane {
     }
 
     public void addVehicle(Vehicle vehicle, int initLanePoint) {
-        if (vehicles[initLanePoint] == null) {
-            vehicles[initLanePoint] = vehicle;
+        if (getVehicle(initLanePoint) == null) {
+            vehicles[initLanePoint % points.length] = vehicle;
         }
     }
 
